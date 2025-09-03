@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 env:
-  version: m138-80d088a-1-gaming-v2
+  version: m138-80d088a-1-gaming-v3
 
 jobs:
   linux:
