@@ -25,8 +25,11 @@ def main():
   else:
     args = ['is_official_build=true']
 
+  # Game engine optimized configuration - performance focused
   args += [
     'target_cpu="' + machine + '"',
+    
+    # System dependencies - standard Skia configuration
     'skia_use_system_expat=false',
     'skia_use_system_libjpeg_turbo=false',
     'skia_use_system_libpng=false',
@@ -37,7 +40,21 @@ def main():
     'skia_use_system_harfbuzz=false',
     'skia_pdf_subset_harfbuzz=true',
     'skia_use_system_icu=false',
-    'skia_enable_skottie=true'
+    
+    # Essential game engine features
+    'skia_enable_skottie=true',           # Animation support
+    'skia_enable_ganesh=true',            # Modern GPU backend (Ganesh)
+    'skia_enable_graphite=false',         # Disable experimental Graphite backend
+    
+    # Performance optimizations
+    'skia_disable_tracing=true',          # Remove tracing overhead in production
+    'skia_enable_optimize_size=false',    # Optimize for performance, not size
+    'skia_enable_precompile=true',        # Precompile shaders for better performance
+    
+    # Disable features games typically don't need
+    'skia_enable_tools=false',            # No development tools
+    'skia_use_dawn=false',                # No WebGPU backend needed
+    'skia_use_lua=false',                 # No Lua scripting
   ]
 
   if isMacos or isIos or isTvos:
@@ -71,19 +88,27 @@ def main():
         # TODO: use clang on all targets!
         args += [
             'skia_gl_standard="gles"',
+            'skia_use_gl=true',                   # OpenGL ES for ARM64
+            'skia_enable_discrete_gpu=true',      # Prefer discrete GPU
             'extra_cflags_cc=["-fno-exceptions", "-fno-rtti", "-flax-vector-conversions=all", "-D_GLIBCXX_USE_CXX11_ABI=0"]',
             'cc="clang"',
             'cxx="clang++"',
         ]
     else:
         args += [
+            'skia_use_gl=true',                   # OpenGL support
+            'skia_use_vulkan=true',               # Vulkan for better performance on x64
+            'skia_enable_discrete_gpu=true',      # Prefer discrete GPU
             'extra_cflags_cc=["-fno-exceptions", "-fno-rtti","-D_GLIBCXX_USE_CXX11_ABI=0"]',
             'cc="gcc"',
             'cxx="g++"',
         ]
   elif 'windows' == target:
     args += [
-      'skia_use_direct3d=true',
+      'skia_use_direct3d=true',             # Direct3D 12 for Windows
+      'skia_use_gl=true',                   # Also enable OpenGL
+      'skia_use_vulkan=true',               # Vulkan support for high performance
+      'skia_enable_discrete_gpu=true',      # Prefer discrete GPU
       'extra_cflags=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]',
     ]
     if 'windows' == host:
@@ -99,13 +124,9 @@ def main():
       'ndk="'+ ndk + '"'
     ]
   elif 'wasm' == target:
-    # brew install emscripten binaryen llvm nodejs
-    # echo "BINARYEN_ROOT = '/usr/local'" >> ~/.emscripten
-    # echo "LLVM_ROOT = '/opt/homebrew/opt/llvm/bin'" >> ~/.emscripten
-    # echo "NODE_JS = '/opt/homebrew/bin/node'" >> ~/.emscripten
-
-    # see skia/modules/canvaskit/compile.sh for reference:
+    # Game engine optimized WebAssembly build
     args += [
+        # Essential image formats for games
         'skia_use_dng_sdk=false',
         'skia_use_libjpeg_turbo_decode=true',
         'skia_use_libjpeg_turbo_encode=true',
@@ -113,25 +134,38 @@ def main():
         'skia_use_libpng_encode=true',
         'skia_use_libwebp_decode=true',
         'skia_use_libwebp_encode=true',
-        'skia_use_wuffs=true',
-        'skia_use_lua=false',
+        'skia_use_wuffs=true',                    # Fast image decoding
+        
+        # Disable unused features
+        'skia_use_lua=false',                     # No Lua scripting
+        'skia_use_piex=false',                    # No RAW image support
+        'skia_enable_tools=false',                # No dev tools
+        
+        # Graphics optimization for games
         'skia_use_webgl=true',
-        'skia_use_piex=false',
+        'skia_gl_standard="webgl"',
+        'skia_use_gl=true',
+        'skia_enable_ganesh=true',                # GPU backend
+        'skia_enable_discrete_gpu=true',          # Prefer discrete GPU
+        
+        # Text rendering for games
+        'skia_enable_fontmgr_custom_directory=false',
+        'skia_enable_fontmgr_custom_embedded=true',   # Embedded fonts
+        'skia_enable_fontmgr_custom_empty=true',
+        
+        # System library configuration
         'skia_use_system_libpng=false',
         'skia_use_system_freetype2=false',
         'skia_use_system_libjpeg_turbo=false',
         'skia_use_system_libwebp=false',
-        'skia_enable_tools=false',
-        'skia_enable_fontmgr_custom_directory=false',
-        'skia_enable_fontmgr_custom_embedded=true',
-        'skia_enable_fontmgr_custom_empty=true',
-        'skia_use_webgl=true',
-        'skia_gl_standard="webgl"',
-        'skia_use_gl=true',
-        'skia_enable_gpu=true',
-        'skia_enable_svg=true', # other targets have this set in skia.gni
-        'skia_use_expat=true',   # other targets have this set in skia.gni
-        'extra_cflags=["-DSK_SUPPORT_GPU=1", "-DSK_GL", "-DSK_DISABLE_LEGACY_SHADERCONTEXT", "-sSUPPORT_LONGJMP=wasm"]'
+        
+        # Game engine essentials
+        'skia_enable_svg=true',                   # SVG for UI
+        'skia_use_expat=true',                    # XML parsing
+        'skia_enable_skottie=true',               # Animations
+        
+        # Performance optimizations for WASM
+        'extra_cflags=["-DSK_SUPPORT_GPU=1", "-DSK_GL", "-DSK_DISABLE_LEGACY_SHADERCONTEXT", "-sSUPPORT_LONGJMP=wasm", "-O3"]'
     ]
 
   if 'linux' == host and 'arm64' == host_machine:
