@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         build_type: [Release, Debug]
-        machine: [x64, arm64]
+        machine: [x64]  # 暂时只构建x64，避免交叉编译问题
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         build_type: [Release, Debug]
-        machine: [x64, arm64]
+        machine: [x64]  # 暂时只构建x64
       fail-fast: false
     steps:
       - run: git config --global core.autocrlf input
