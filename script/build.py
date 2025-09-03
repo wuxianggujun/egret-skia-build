@@ -122,6 +122,11 @@ def main():
       'skia_enable_discrete_gpu=true',      # Prefer discrete GPU
       'extra_cflags=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]',
     ]
+    # Windows runtime library configuration
+    if build_type == 'Debug':
+      args += ['extra_cflags=["/MDd", "-D_ITERATOR_DEBUG_LEVEL=2"]']
+    else:
+      args += ['extra_cflags=["/MD", "-D_ITERATOR_DEBUG_LEVEL=0"]']
     if 'windows' == host:
       clang_path = shutil.which('clang-cl.exe')
       if not clang_path:
