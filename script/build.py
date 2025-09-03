@@ -22,8 +22,22 @@ def main():
 
   if build_type == 'Debug':
     args = ['is_debug=true']
+    # Debug-specific game engine configuration
+    debug_optimizations = [
+      'skia_disable_tracing=false',        # Keep tracing for debugging
+      'skia_enable_tools=true',            # Enable debug tools
+      'skia_enable_optimize_size=false',   # Still optimize for performance
+      'skia_enable_precompile=false',      # No precompilation to aid debugging
+    ]
   else:
     args = ['is_official_build=true']
+    # Release-specific game engine configuration  
+    debug_optimizations = [
+      'skia_disable_tracing=true',         # Remove tracing overhead in production
+      'skia_enable_tools=false',           # No development tools in release
+      'skia_enable_optimize_size=false',   # Optimize for performance, not size
+      'skia_enable_precompile=true',       # Precompile shaders for better performance
+    ]
 
   # Game engine optimized configuration - performance focused
   args += [
@@ -41,21 +55,18 @@ def main():
     'skia_pdf_subset_harfbuzz=true',
     'skia_use_system_icu=false',
     
-    # Essential game engine features
+    # Essential game engine features (same for Debug and Release)
     'skia_enable_skottie=true',           # Animation support
     'skia_enable_ganesh=true',            # Modern GPU backend (Ganesh)
     'skia_enable_graphite=false',         # Disable experimental Graphite backend
     
-    # Performance optimizations
-    'skia_disable_tracing=true',          # Remove tracing overhead in production
-    'skia_enable_optimize_size=false',    # Optimize for performance, not size
-    'skia_enable_precompile=true',        # Precompile shaders for better performance
-    
-    # Disable features games typically don't need
-    'skia_enable_tools=false',            # No development tools
+    # Features games typically don't need (same for Debug and Release)
     'skia_use_dawn=false',                # No WebGPU backend needed
     'skia_use_lua=false',                 # No Lua scripting
   ]
+  
+  # Add Debug/Release specific optimizations
+  args += debug_optimizations
 
   if isMacos or isIos or isTvos:
     if isMacos:
