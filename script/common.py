@@ -64,6 +64,23 @@ def github_headers():
     'Authorization': auth
   }
 
+def github_repo():
+  """Get current GitHub repository from environment or default to current repo"""
+  github_ref = os.environ.get('GITHUB_REPOSITORY')
+  if github_ref:
+    return github_ref
+  # Fallback - try to get from git remote
+  try:
+    remote_url = subprocess.check_output(['git', 'remote', 'get-url', 'origin']).decode('utf-8').strip()
+    # Extract owner/repo from GitHub URL
+    import re
+    match = re.search(r'github\.com[:/]([^/]+/[^/\s]+?)(?:\.git)?$', remote_url)
+    if match:
+      return match.group(1)
+  except:
+    pass
+  return 'wuxianggujun/egret-skia-build'  # Default fallback
+
 def ndk():
   parser = create_parser()
   (args, _) = parser.parse_known_args()

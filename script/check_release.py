@@ -11,7 +11,9 @@ def main():
   classifier = common.classifier()
 
   try:
-    resp = urllib.request.urlopen(urllib.request.Request('https://api.github.com/repos/JetBrains/skia-pack/releases/tags/' + version, headers=headers)).read()
+    # Check current repository instead of JetBrains original
+    repo_url = 'https://api.github.com/repos/' + common.github_repo() + '/releases/tags/' + version
+    resp = urllib.request.urlopen(urllib.request.Request(repo_url, headers=headers)).read()
     artifacts = [x['name'] for x in json.loads(resp.decode('utf-8'))['assets']]
     zip = 'Skia-' + version + '-' + target + '-' + build_type + '-' + machine + classifier + '.zip'
     if zip in artifacts:
