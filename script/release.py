@@ -17,12 +17,13 @@ def main():
     return 1
 
   headers = common.github_headers()
+  repo = common.github_repo()
 
   try:
-    resp = urllib.request.urlopen(urllib.request.Request('https://api.github.com/repos/JetBrains/skia-pack/releases/tags/' + version, headers=headers)).read()
+    resp = urllib.request.urlopen(urllib.request.Request('https://api.github.com/repos/' + repo + '/releases/tags/' + version, headers=headers)).read()
   except urllib.error.URLError as e:
     data = '{"tag_name":"' + version + '","name":"' + version + '"}'
-    resp = urllib.request.urlopen(urllib.request.Request('https://api.github.com/repos/JetBrains/skia-pack/releases', data=data.encode('utf-8'), headers=headers)).read()
+    resp = urllib.request.urlopen(urllib.request.Request('https://api.github.com/repos/' + repo + '/releases', data=data.encode('utf-8'), headers=headers)).read()
   upload_url = re.match('https://.*/assets', json.loads(resp.decode('utf-8'))['upload_url']).group(0)
 
   print('Uploading', zip, 'to', upload_url)
