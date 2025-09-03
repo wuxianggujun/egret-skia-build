@@ -3,18 +3,30 @@ set -o errexit -o nounset -o pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
+# 基础系统更新
 apt-get update -y
-apt-get install build-essential software-properties-common -y
-add-apt-repository ppa:ubuntu-toolchain-r/test -y
-apt-get update -y
-apt-get install build-essential software-properties-common -y
-apt-get update
-apt-get install gcc-9 g++-9 -y
-update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
-update-alternatives --config gcc 
 
-# Install clang for cross-compilation support
-apt-get install clang -y
+# 安装基本构建工具 - 使用Ubuntu 20.04自带的版本，避免PPA问题
+apt-get install -y \
+    build-essential \
+    software-properties-common \
+    git \
+    python3 \
+    wget \
+    curl \
+    zip \
+    ninja-build \
+    fontconfig \
+    libfontconfig1-dev \
+    libglu1-mesa-dev
 
-apt-get install git python3 wget -y
-apt-get install ninja-build fontconfig libfontconfig1-dev libglu1-mesa-dev curl zip -y
+# 安装clang（用于可能的交叉编译）
+apt-get install -y clang
+
+# 验证安装
+echo "=== 构建环境信息 ==="
+gcc --version
+g++ --version
+python3 --version
+ninja --version
+echo "=== 准备完成 ==="
