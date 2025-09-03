@@ -2,3 +2,20 @@
 /depot_tools
 *.zip
 __pycache__
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Claude Code files
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+build/
+out/
+*.log
