@@ -38,11 +38,11 @@ def version():
   if args.version:
     return args.version
 
-  branches = subprocess.check_output(['git', 'branch', '--contains', 'HEAD']).decode('utf-8')
-  for match in re.finditer('chrome/(m\\d+)', branches):
-    version = match.group(1)
-  revision = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8')
-  return version + '-' + revision.strip()[:10]
+  # 使用固定的游戏引擎版本标识符
+  base_version = "m138-80d088a-1-gaming"
+  build_version = "v4"  # 当前构建版本
+  
+  return base_version + '-' + build_version
 
 def build_type():
   parser = create_parser()

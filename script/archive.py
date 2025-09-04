@@ -18,7 +18,7 @@ def main():
   machine = common.machine()
   target = common.target()
   classifier = common.classifier()
-  out_bin = 'out/' + build_type + '-' + target + '-' + machine
+  out_bin = 'out/' + build_type + '-' + target + '-' + machine + '-' + version
 
   globs = [
     out_bin + '/*.a',

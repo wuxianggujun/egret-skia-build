@@ -212,7 +212,9 @@ def main():
     tools_dir = 'tools'
     ninja = 'ninja-linux-arm64'
 
-  out = os.path.join('out', build_type + '-' + target + '-' + machine + '-v4')
+  # 获取统一的版本标识
+  version = common.version()
+  out = os.path.join('out', build_type + '-' + target + '-' + machine + '-' + version)
   gn = 'gn.exe' if 'windows' == host else 'gn'
   print([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args)])
   subprocess.check_call([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args)])
