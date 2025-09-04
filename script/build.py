@@ -1,16 +1,5 @@
 #! /usr/bin/env python3
 
-# Skia构建脚本
-# 支持轻量级Debug模式以减小体积:
-#   正常Debug构建: python build.py
-#   轻量级Debug构建: SKIA_LITE_DEBUG=1 python build.py
-# 
-# 轻量级Debug模式会：
-# - 禁用性能追踪功能 (减少约100-150MB)
-# - 禁用开发工具 (减少约50-100MB)  
-# - 启用体积优化 (减少约20-30%)
-# - 保留调试符号 (可正常调试)
-
 import common, os, shutil, subprocess, sys
 
 def main():
@@ -34,26 +23,12 @@ def main():
   if build_type == 'Debug':
     args = ['is_debug=true']
     # Debug-specific game engine configuration
-    # 可通过环境变量 SKIA_LITE_DEBUG=1 启用轻量级Debug模式减小体积
-    lite_debug = os.getenv('SKIA_LITE_DEBUG', '0') == '1'
-    
-    if lite_debug:
-      # 轻量级Debug配置 - 保留核心调试功能但减小体积
-      debug_optimizations = [
-        'skia_disable_tracing=true',         # 禁用追踪减小体积
-        'skia_enable_tools=false',           # 禁用开发工具减小体积
-        'skia_enable_optimize_size=true',    # 启用体积优化
-        'skia_enable_precompile=false',      # 保持调试友好性
-        'strip_debug_info=false',            # 保留调试符号
-      ]
-    else:
-      # 完整Debug配置 - 最佳调试体验
-      debug_optimizations = [
-        'skia_disable_tracing=false',        # Keep tracing for debugging
-        'skia_enable_tools=true',            # Enable debug tools
-        'skia_enable_optimize_size=false',   # Still optimize for performance
-        'skia_enable_precompile=false',      # No precompilation to aid debugging
-      ]
+    debug_optimizations = [
+      'skia_disable_tracing=false',        # Keep tracing for debugging
+      'skia_enable_tools=true',            # Enable debug tools
+      'skia_enable_optimize_size=false',   # Still optimize for performance
+      'skia_enable_precompile=false',      # No precompilation to aid debugging
+    ]
   else:
     args = ['is_official_build=true']
     # Release-specific game engine configuration  
@@ -212,9 +187,7 @@ def main():
     tools_dir = 'tools'
     ninja = 'ninja-linux-arm64'
 
-  # 获取统一的版本标识
-  version = common.version()
-  out = os.path.join('out', build_type + '-' + target + '-' + machine + '-' + version)
+  out = os.path.join('out', build_type + '-' + target + '-' + machine)
   gn = 'gn.exe' if 'windows' == host else 'gn'
   print([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args)])
   subprocess.check_call([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args)])
