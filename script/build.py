@@ -120,8 +120,9 @@ def main():
       'skia_use_gl=true',                   # Also enable OpenGL
       'skia_use_vulkan=true',               # Vulkan support for high performance
       'skia_enable_discrete_gpu=true',      # Prefer discrete GPU
+      'msvc_use_dynamic_crt=true',          # 使用动态运行时库 (MD/MDd)
     ]
-    # Windows runtime library configuration
+    # Windows动态运行时库配置 - 现代Windows开发标准
     if build_type == 'Debug':
       args += ['extra_cflags=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS", "/MDd", "-D_ITERATOR_DEBUG_LEVEL=2"]']
     else:
